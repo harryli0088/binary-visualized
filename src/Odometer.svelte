@@ -1,10 +1,13 @@
 <script lang="ts">
 	import Dial from './Dial.svelte';
+  import { DIAL_WIDTH } from './utils/constants'
   import roundToNearest from "./utils/roundToNearest"
 
   export let base: number = 10
   export let initialValue: number = 0
+  export let label: string = "Base 10 Value"
   export let places: number = 1
+  export let showBaseTenValue: boolean = true
 	let odometerValue = initialValue
 
   $: getDialValue = (factor) => {
@@ -22,12 +25,15 @@
     )
   }
 
-  $:digits = Array.from(Array(base).keys())
+  $:digits = Array.from(Array(base).keys()).map(d => d.toString(base).toUpperCase())
   $:factors = Array(places).fill(0).map((_, i) => Math.pow(base, i))
 </script>
 
-<main>
-  <p><b>Value:</b> {odometerValue}</p>
+<main style="--dial-width:{DIAL_WIDTH}px">
+  <div><b>{label}:</b> {odometerValue}</div>
+  {#if showBaseTenValue}
+    <div><b>Base {base} Value:</b> {odometerValue.toString(base)}</div>
+  {/if}
 	<div class="odometer-container">
     <div class="odometer">
       {#each factors as factor, i}
@@ -43,10 +49,16 @@
       <div class="pointer right">◀</div>
     </div>
   </div>
+  <div class="places-container">
+    {#each factors as factor, i}
+      <div class="place">{factor}</div>
+    {/each}
+  </div>
 </main>
 
 <style>
 	main {
+    text-align: center;
 	}
 
   .odometer {
@@ -54,6 +66,8 @@
     flex-direction: row-reverse;
 
     position: relative;
+    border: 3px solid gray;
+    box-shadow: inset 0px 10px 10px #555, inset 0px -10px 10px #555;
   }
   .odometer-container {
     display: flex;
@@ -66,11 +80,23 @@
     top: 50%;
   }
   .left {
-    left: 0;
+    left: -2px;
     transform: translate(-100%, -50%);
   }
   .right {
-    right: 0;
+    right: -3px;
     transform: translate(100%, -50%);
+  }
+
+  .place {
+    color: gray;
+    font-weight: bold;
+    width: var(--dial-width);
+  }
+  .places-container {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
   }
 </style>

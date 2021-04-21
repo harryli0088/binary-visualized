@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { cubicOut } from 'svelte/easing'
 	import { tweened } from 'svelte/motion'
+	import { DIAL_HEIGHT, DIAL_WIDTH } from './utils/constants'
 	import getPlaceValue from "./utils/getPlaceValue"
 
 	export let base: number = 10
-	export let digits: number[] = []
+	export let digits: string[] = []
 	export let setValue: (difference: number) => void = () => {}
 	export let value: number = 0 //the value tracked by this dial
+
+	$: numDigits = digits.length
 
 	let prevValue = value //track the previous value
 	$: {
@@ -24,27 +27,44 @@
     prevValue = value //set the new previous value
   }
 
-	const DIAL_HEIGHT = 50
-	const DIAL_WIDTH = 50
 	const myValue = tweened(value, {
     duration: 500,
     easing: cubicOut
   })
 
 	let startClientY: number = -1
+	$: dialIsMoving = startClientY >= 0
 	let startValue: number = -1
 	function handleMousedown(e) {
+		startDial(e.clientY)
+	}
+	function handleTouchstart(e) {
+    e.preventDefault()
+    startDial(e.touches[0].clientY)
+  }
+	function startDial(clientY: number) {
 		//record info to start changing this dial
-		startClientY = e.clientY
+		startClientY = clientY
 		startValue = $myValue
 	}
+
 	function handleMousemove(e) {
-		if(startClientY >= 0) { //if we are changing this dial
-			myValue.set(startValue + (startClientY - e.clientY) / DIAL_HEIGHT, {duration: 0})
+		moveDial(e.clientY)
+	}
+  function handleTouchmove(e) {
+    if(dialIsMoving) { //if we should move
+      e.preventDefault()
+      moveDial(e.touches[0].clientY)
+    }
+  }
+	function moveDial(clientY: number) {
+		if(dialIsMoving) { //if we are changing this dial
+			myValue.set(startValue + (startClientY - clientY) / DIAL_HEIGHT, {duration: 0})
 		}
 	}
-	function handleMouseExit(e) {
-		if(startClientY >= 0) { //if we are done changing this dial
+
+	function handleDialEnd(e) {
+		if(dialIsMoving) { //if we are done changing this dial
 			myValue.set(Math.round($myValue)) //force the dial to the closest integer
 			setValue($myValue - startValue) //pass the difference to the set value prop
 
@@ -55,20 +75,26 @@
 	}
 
 	$: getTopvalue = (index: number, isAbove: boolean) => {
-		let logicalValue = (index - $myValue) % digits.length
+		let logicalValue = (index - $myValue) % numDigits
 
 		//we duplicate the values because in the case of binary
 		//if the selected value is 0, we want to see 1s above and below
 		if(isAbove) { //in the case of binad
-			logicalValue += digits.length
+			logicalValue += numDigits
 		}
 
 		//if this digit is too far ahead, wrap it to the back
-		if(logicalValue > digits.length) {
-			logicalValue -= 2*digits.length
+		if(logicalValue > numDigits) {
+			logicalValue -= 2*numDigits
 		}
 
 		return logicalValue * DIAL_HEIGHT + DIAL_HEIGHT/2
+	}
+	$: getDialClass = (index: number) => {
+		let className = 'dial-value'
+		if(index === 0) className += ' top-bound'
+		if(index === numDigits-1) className += ' bottom-bound'
+		return className
 	}
 </script>
 
@@ -77,12 +103,16 @@
 		class="dial-container"
 		on:mousedown={handleMousedown}
 		on:mousemove={handleMousemove}
-		on:mouseleave={handleMouseExit}
-		on:mouseup={handleMouseExit}
+		on:mouseleave={handleDialEnd}
+		on:mouseout={handleDialEnd}
+		on:mouseup={handleDialEnd}
+		on:touchstart={handleTouchstart}
+    on:touchmove={handleTouchmove}
+    on:touchend={handleDialEnd}
 	>
 		{#each digits as d, i}
-			<div class="dial-value" style={`top:${getTopvalue(i, false)}px;`}>{d}</div>
-			<div class="dial-value" style={`top:${getTopvalue(i, true)}px;`}>{d}</div>
+			<div class={getDialClass(i)} style={`top:${getTopvalue(i, false)}px;`}>{d}</div>
+			<div class={getDialClass(i)} style={`top:${getTopvalue(i, true)}px;`}>{d}</div>
 		{/each}
 	</div>
 </main>
@@ -92,10 +122,12 @@
 	}
 
 	.dial-container {
-		border: 1px solid gray;
 		position: relative;
+
+		border: 1px solid gray;
+		cursor: pointer;
+		height: calc(2 * var(--dial-height));
 		overflow-y: hidden;
-		height: 100px;
 		width: var(--dial-width);
 	}
 
@@ -107,10 +139,18 @@
 		position: absolute;
 		left: 0;
 
-		border-bottom: 1px solid #ccc;
+		border-bottom: 1px solid #ddd;
+		border-top: 1px solid #ddd;
 		font-weight: bold;
 		height: var(--dial-height);
+		user-select: none;
 		text-align: center;
 		width: 100%;
 	}
-</style>
+	.top-bound {
+		border-top-color: #EC7063;
+	}
+	.bottom-bound {
+		border-bottom-color: #EC7063;
+	}
+ </style>
