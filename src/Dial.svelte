@@ -33,7 +33,8 @@
   })
 
 	let startClientY: number = -1
-	$: dialIsMoving = startClientY >= 0
+	const dialIsMoving = () => startClientY >= 0
+
 	let startValue: number = -1
 	function handleMousedown(e) {
 		startDial(e.clientY)
@@ -52,19 +53,19 @@
 		moveDial(e.clientY)
 	}
   function handleTouchmove(e) {
-    if(dialIsMoving) { //if we should move
+    if(dialIsMoving()) { //if we should move
       e.preventDefault()
       moveDial(e.touches[0].clientY)
     }
   }
 	function moveDial(clientY: number) {
-		if(dialIsMoving) { //if we are changing this dial
-			myValue.set(startValue + (startClientY - clientY) / DIAL_HEIGHT, {duration: 0})
+		if(dialIsMoving()) { //if we are changing this dial
+			myValue.set(startValue + 1.2*(startClientY - clientY) / DIAL_HEIGHT, {duration: 0})
 		}
 	}
 
 	function handleDialEnd(e) {
-		if(dialIsMoving) { //if we are done changing this dial
+		if(dialIsMoving()) { //if we are done changing this dial
 			myValue.set(Math.round($myValue)) //force the dial to the closest integer
 			setValue($myValue - startValue) //pass the difference to the set value prop
 
@@ -101,6 +102,7 @@
 <main style="--dial-width:{DIAL_WIDTH}px;--dial-height:{DIAL_HEIGHT}px">
 	<div
 		class="dial-container"
+		on:click={() => console.log("CLICK")}
 		on:mousedown={handleMousedown}
 		on:mousemove={handleMousemove}
 		on:mouseleave={handleDialEnd}

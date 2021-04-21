@@ -32,7 +32,7 @@
 <main style="--dial-width:{DIAL_WIDTH}px">
   <div><b>{label}:</b> {odometerValue}</div>
   {#if showBaseTenValue}
-    <div><b>Base {base} Value:</b> {odometerValue.toString(base)}</div>
+    <div><b>Base {base} Value:</b> {odometerValue.toString(base).toUpperCase()}</div>
   {/if}
 	<div class="odometer-container">
     <div class="odometer">
@@ -53,6 +53,9 @@
     {#each factors as factor, i}
       <div class="place">{factor}</div>
     {/each}
+  </div>
+  <div>
+    <button on:click={() => odometerValue ++}>Increment Value</button>
   </div>
 </main>
 
@@ -98,5 +101,9 @@
     flex-direction: row-reverse;
     align-items: center;
     justify-content: center;
+  }
+
+  button {
+    margin-top: 0.5em;
   }
 </style>
