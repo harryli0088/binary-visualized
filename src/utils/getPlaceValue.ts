@@ -11,6 +11,5 @@ export default function getPlaceValue(
   factor: number,
   base: number,
 ) {
-  console.log(Math.floor(number / factor) % base, number, factor, base)
   return Math.floor(number / factor) % base
 }

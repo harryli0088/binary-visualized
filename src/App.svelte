@@ -15,8 +15,7 @@
 			<li>This year is {now.getFullYear()}</li>
 		</ul>
 		<p>"Base ten" simply means that we have ten symbols available to use for counting, ie 0, 1, 2, 3, 4, 5, 6, 7, 8, 9. When we get to the number "ten", we don't have a special symbol. Instead, we combine two symbols "1" and "0" to represent the number 10.</p>
-		<p>Simple 09 to 10 example</p>
-		<Odometer base={10} places={4}/>
+		<Odometer base={10} initialValue={9} places={2}/>
 		<p>Notice that when we ran out of symbols in the "ones" place, we incremented the symbol in the "tens" place from 0 to 1. We also reset the symbol in the ones place from 9 to 0</p>
 	</section>
 

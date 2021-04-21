@@ -10,7 +10,6 @@
 
 	let prevValue = value //track the previous value
 	$: {
-		console.log(value)
 		if(prevValue !== value) { //if the value changed
 			myValue.set( //update my value
 				value,
@@ -26,7 +25,8 @@
   }
 
 	const DIAL_HEIGHT = 50
-	const myValue = tweened(0, {
+	const DIAL_WIDTH = 50
+	const myValue = tweened(value, {
     duration: 500,
     easing: cubicOut
   })
@@ -72,7 +72,7 @@
 	}
 </script>
 
-<main>
+<main style="--dial-width:{DIAL_WIDTH}px;--dial-height:{DIAL_HEIGHT}px">
 	<div
 		class="dial-container"
 		on:mousedown={handleMousedown}
@@ -96,7 +96,7 @@
 		position: relative;
 		overflow-y: hidden;
 		height: 100px;
-		width: 50px;
+		width: var(--dial-width);
 	}
 
 	.dial-value {
@@ -109,7 +109,7 @@
 
 		border-bottom: 1px solid #ccc;
 		font-weight: bold;
-		height: 50px;
+		height: var(--dial-height);
 		text-align: center;
 		width: 100%;
 	}

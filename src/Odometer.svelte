@@ -3,11 +3,11 @@
   import roundToNearest from "./utils/roundToNearest"
 
   export let base: number = 10
+  export let initialValue: number = 0
   export let places: number = 1
-	let odometerValue = 0
+	let odometerValue = initialValue
 
   $: getDialValue = (factor) => {
-    console.log(factor, Math.floor(odometerValue / factor))
     //Each dial needs to track its value and the values of the dials above it,
     //which is necessary to have smooth animations when we wrap around start and end digits:
     //ie between 9 and 0 in base ten.
@@ -39,7 +39,8 @@
         />
       {/each}
 
-      <div class="pointer">&#9664;</div>
+      <div class="pointer left">▶</div>
+      <div class="pointer right">◀</div>
     </div>
   </div>
 </main>
@@ -63,6 +64,12 @@
     color: red;
     position: absolute;
     top: 50%;
+  }
+  .left {
+    left: 0;
+    transform: translate(-100%, -50%);
+  }
+  .right {
     right: 0;
     transform: translate(100%, -50%);
   }
