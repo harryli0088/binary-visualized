@@ -1,28 +1,34 @@
 <script lang="ts">
 	import { cubicOut } from 'svelte/easing'
 	import { tweened } from 'svelte/motion'
+	import getPlaceValue from "./utils/getPlaceValue"
 	import roundToNearest from "./utils/roundToNearest"
 
 	export let base: number = 10
+	export let digits: number[] = []
 	export let factor: number = 1
 	export let value: number = 0
 
-	let prevValue = value
+	let prevValue = value //track the previous value
 	$: {
-		if(prevValue !== value) {
-			myValue.set(Math.floor(value / factor))
-			console.log("my value", $myValue, value)
+		if(prevValue !== value) { //if the value changed
+			myValue.set( //update my value
+				Math.floor(value / factor), //force the value into an integer
+				(
+					//if the place values are the same, set myValue without any duration
+					//this prevents undesired animation when a higher magnitude dial changes
+					getPlaceValue(prevValue, factor, base) === getPlaceValue(value, factor, base)
+					? {duration: 0} : undefined
+				)
+			)
 		}
-    prevValue = value;
+    prevValue = value //set the new previous value
   }
 
 	const myValue = tweened(0, {
     duration: 500,
     easing: cubicOut
   })
-
-
-	$: digits = Array.from(Array(base).keys())
 
 	let startClientY: number = -1
 	let startValue: number = -1
@@ -32,8 +38,7 @@
 	}
 	function handleMousemove(e) {
 		if(startClientY >= 0) {
-			myValue.set($myValue + (startClientY - e.clientY) / 50, {duration: 0})
-			startClientY = e.clientY
+			myValue.set(startValue + (startClientY - e.clientY) / 50, {duration: 0})
 		}
 	}
 	function handleMouseExit(e) {

@@ -5,6 +5,7 @@
   export let places: number = 1
 	export let value = 0
 
+  $:digits = Array.from(Array(base).keys())
   $:placesArray = Array(places)
 </script>
 
@@ -12,7 +13,12 @@
 	<div class="odometer-container">
     <div class="odometer">
       {#each placesArray as p, i}
-        <Dial {base} factor={Math.pow(base, i)} bind:value={value}/>
+        <Dial
+          {base}
+          {digits}
+          factor={Math.pow(base, i)}
+          bind:value={value}
+        />
       {/each}
 
       <div class="pointer">&#9664;</div>
