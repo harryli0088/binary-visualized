@@ -1,32 +1,63 @@
 <script lang="ts">
-	export let digits: number[] = []
+	import { beforeUpdate } from 'svelte'
+	import roundToNearest from "./utils/roundToNearest"
+
+	export let base: number = 10
+	export let factor: number = 1
 	export let value: number = 0
 
-	let lastClientY: number = -1
+	let prevValue = value
+	$: {
+		if(prevValue !== value) {
+			myValue = Math.floor(value / factor) % base
+
+		}
+    prevValue = value;
+  }
+
+	let myValue = 0
+	beforeUpdate(() => {
+	})
+
+	$: digits = Array.from(Array(base).keys())
+	$: effectiveValue = myValue
+
+	let startClientY: number = -1
+	let startValue: number = -1
 	function handleMousedown(e) {
-		lastClientY = e.clientY
+		startClientY = e.clientY
+		startValue = myValue
 	}
 	function handleMousemove(e) {
-		if(lastClientY >= 0) {
-			value += ( lastClientY - e.clientY ) / 50
-			lastClientY = e.clientY
+		if(startClientY >= 0) {
+			myValue += (startClientY - e.clientY) / 50
+			startClientY = e.clientY
 		}
 	}
 	function handleMouseExit(e) {
-		// value = Math.round(value)
-		lastClientY = -1
+		if(startClientY >= 0) {
+			const difference = roundToNearest(factor*(myValue - startValue), factor)
+			value += difference
+			startClientY = -1
+			startValue = -1
+		}
 	}
 
 	$: getTopvalue = (index: number, isAbove: boolean) => {
-		let logicalValue = (index - value) % digits.length
-		if(isAbove) {
+		let logicalValue = (index - effectiveValue) % digits.length
+
+		//we duplicate the values because in the case of binary
+		//if the selected value is 0, we want to see 1s above and below
+		if(isAbove) { //in the case of binad
 			logicalValue += digits.length
 		}
+
+		//if this digit is too far ahead, wrap it to the back
 		if(logicalValue > digits.length) {
 			logicalValue -= 2*digits.length
 		}
 
-		return logicalValue * 50 + 50
+		return logicalValue * 50 + 25
 	}
 </script>
 
@@ -50,19 +81,25 @@
 	}
 
 	.dial-container {
-		background-color: pink;
+		border: 1px solid gray;
 		position: relative;
 		overflow-y: hidden;
-		height: 150px;
+		height: 100px;
+		width: 50px;
 	}
 
 	.dial-value {
-		align-items: center;
 		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		position: absolute;
+		left: 0;
+
+		border-bottom: 1px solid #ccc;
 		font-weight: bold;
 		height: 50px;
-		justify-content: center;
-		left: 0;
-		position: absolute;
+		text-align: center;
+		width: 100%;
 	}
 </style>
