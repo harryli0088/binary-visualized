@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { cubicOut } from 'svelte/easing'
+	import { tweened } from 'svelte/motion'
 	import roundToNearest from "./utils/roundToNearest"
 
 	export let base: number = 10
@@ -8,37 +10,36 @@
 	let prevValue = value
 	$: {
 		if(prevValue !== value) {
-			myValue = Math.floor(value / factor) % base
-			console.log("my value", myValue, value)
+			myValue.set(Math.floor(value / factor))
+			console.log("my value", $myValue, value)
 		}
     prevValue = value;
   }
 
-	let myValue = 0
-	const animation = tweened(0, {
-    duration: 4000,
+	const myValue = tweened(0, {
+    duration: 500,
     easing: cubicOut
   })
 
+
 	$: digits = Array.from(Array(base).keys())
-	$: effectiveValue = myValue
 
 	let startClientY: number = -1
 	let startValue: number = -1
 	function handleMousedown(e) {
 		startClientY = e.clientY
-		startValue = myValue
+		startValue = $myValue
 	}
 	function handleMousemove(e) {
 		if(startClientY >= 0) {
-			myValue += (startClientY - e.clientY) / 50
+			myValue.set($myValue + (startClientY - e.clientY) / 50, {duration: 0})
 			startClientY = e.clientY
 		}
 	}
 	function handleMouseExit(e) {
 		if(startClientY >= 0) {
-			myValue = Math.round(myValue)
-			const difference = roundToNearest(factor*(myValue - startValue), factor)
+			myValue.set(Math.round($myValue))
+			const difference = roundToNearest(factor*($myValue - startValue), factor)
 			value += difference
 			startClientY = -1
 			startValue = -1
@@ -46,7 +47,7 @@
 	}
 
 	$: getTopvalue = (index: number, isAbove: boolean) => {
-		let logicalValue = (index - effectiveValue) % digits.length
+		let logicalValue = (index - $myValue) % digits.length
 
 		//we duplicate the values because in the case of binary
 		//if the selected value is 0, we want to see 1s above and below
