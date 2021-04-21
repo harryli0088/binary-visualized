@@ -3,7 +3,7 @@
 
   export let base: number = 10
   export let places: number = 1
-	export let value: number = 0
+	export let value = 0
 
   $:placesArray = Array(places)
 </script>

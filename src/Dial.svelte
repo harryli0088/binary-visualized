@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { beforeUpdate } from 'svelte'
 	import roundToNearest from "./utils/roundToNearest"
 
 	export let base: number = 10
@@ -10,14 +9,16 @@
 	$: {
 		if(prevValue !== value) {
 			myValue = Math.floor(value / factor) % base
-
+			console.log("my value", myValue, value)
 		}
     prevValue = value;
   }
 
 	let myValue = 0
-	beforeUpdate(() => {
-	})
+	const animation = tweened(0, {
+    duration: 4000,
+    easing: cubicOut
+  })
 
 	$: digits = Array.from(Array(base).keys())
 	$: effectiveValue = myValue
@@ -36,6 +37,7 @@
 	}
 	function handleMouseExit(e) {
 		if(startClientY >= 0) {
+			myValue = Math.round(myValue)
 			const difference = roundToNearest(factor*(myValue - startValue), factor)
 			value += difference
 			startClientY = -1
