@@ -2,22 +2,21 @@
 	import { cubicOut } from 'svelte/easing'
 	import { tweened } from 'svelte/motion'
 	import getPlaceValue from "./utils/getPlaceValue"
-	import roundToNearest from "./utils/roundToNearest"
 
 	export let base: number = 10
 	export let digits: number[] = []
-	export let factor: number = 1
-	export let value: number = 0
+	export let setValue: (difference: number) => void = () => {}
+	export let value: number = 0 //the value tracked by this dial
 
 	let prevValue = value //track the previous value
 	$: {
 		if(prevValue !== value) { //if the value changed
 			myValue.set( //update my value
-				Math.floor(value / factor), //force the value into an integer
+				value,
 				(
 					//if the place values are the same, set myValue without any duration
 					//this prevents undesired animation when a higher magnitude dial changes
-					getPlaceValue(prevValue, factor, base) === getPlaceValue(value, factor, base)
+					getPlaceValue(prevValue, 1, base) === getPlaceValue(value, 1, base)
 					? {duration: 0} : undefined
 				)
 			)
@@ -25,6 +24,7 @@
     prevValue = value //set the new previous value
   }
 
+	const DIAL_HEIGHT = 50
 	const myValue = tweened(0, {
     duration: 500,
     easing: cubicOut
@@ -33,19 +33,21 @@
 	let startClientY: number = -1
 	let startValue: number = -1
 	function handleMousedown(e) {
+		//record info to start changing this dial
 		startClientY = e.clientY
 		startValue = $myValue
 	}
 	function handleMousemove(e) {
-		if(startClientY >= 0) {
-			myValue.set(startValue + (startClientY - e.clientY) / 50, {duration: 0})
+		if(startClientY >= 0) { //if we are changing this dial
+			myValue.set(startValue + (startClientY - e.clientY) / DIAL_HEIGHT, {duration: 0})
 		}
 	}
 	function handleMouseExit(e) {
-		if(startClientY >= 0) {
-			myValue.set(Math.round($myValue))
-			const difference = roundToNearest(factor*($myValue - startValue), factor)
-			value += difference
+		if(startClientY >= 0) { //if we are done changing this dial
+			myValue.set(Math.round($myValue)) //force the dial to the closest integer
+			setValue($myValue - startValue) //pass the difference to the set value prop
+
+			//mark that we are done changing this dial
 			startClientY = -1
 			startValue = -1
 		}
@@ -65,7 +67,7 @@
 			logicalValue -= 2*digits.length
 		}
 
-		return logicalValue * 50 + 25
+		return logicalValue * DIAL_HEIGHT + DIAL_HEIGHT/2
 	}
 </script>
 
