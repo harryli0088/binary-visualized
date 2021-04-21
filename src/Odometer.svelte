@@ -6,7 +6,8 @@
   export let places: number = 1
 	let odometerValue = 0
 
-  function getDialValue(factor) {
+  $: getDialValue = (factor) => {
+    console.log(factor, Math.floor(odometerValue / factor))
     //Each dial needs to track its value and the values of the dials above it,
     //which is necessary to have smooth animations when we wrap around start and end digits:
     //ie between 9 and 0 in base ten.

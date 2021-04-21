@@ -10,6 +10,7 @@
 
 	let prevValue = value //track the previous value
 	$: {
+		console.log(value)
 		if(prevValue !== value) { //if the value changed
 			myValue.set( //update my value
 				value,
