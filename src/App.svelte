@@ -1,7 +1,10 @@
 <script lang="ts">
+	import NumberAndLabel from './NumberAndLabel.svelte';
 	import Odometer from './Odometer.svelte';
 
 	const now = new Date()
+	let globalValue: number = 1234
+	$:globalValueString = globalValue.toString()
 </script>
 
 <main>
@@ -21,24 +24,24 @@
 			<li>This year is {now.getFullYear()}</li>
 		</ul>
 		<p><b>Base-ten</b> (aka <b>decimal</b>) simply means that we have ten symbols available to use for counting, ie 0, 1, 2, 3, 4, 5, 6, 7, 8, 9. When we get to the number <b>ten</b>, we don't have a dedicated symbol. Instead, we combine two symbols <b>1</b> and <b>0</b> to represent the number <b>10</b>.</p>
-		<p>Here is an odometer similar to one you might find in your '95 Toyota Camery. Odometers use rotating dials to represent a multi-digit number. Try rotating the right-most dial and see how it behaves! What happens when you increment from nine to ten?</p>
+		<p>Here is an odometer, which uses rotating dials to represent a multi-digit number. Try rotating the right-most dial and see how it behaves! What happens when you increment from nine to ten?</p>
 		<Odometer base={10} initialValue={0} label="Value" places={2} showBaseTenValue={false}/>
 		<p>When we ran out of symbols in the <b>ones</b> place, we incremented the symbol in the <b>tens</b> place from 0 to 1. We also made a full revolution in the ones place from 9 back to 0.</p>
-		<Odometer base={10} initialValue={1234} label="Value" places={4} showBaseTenValue={false}/>
-		<p>Notice that in base-ten, each subsequent dial on the left represents a higher power of ten, ie the ones place, tens place, hundreds place, thounsands place, etc. Instead of coming up with an infinite number of symbols to represent every single number (❄︎, 🍕, ﬗ, <span style="font-size: 1.5em">🦝</span>, ...), we only use ten. When we run out of symbols in one place, we increment the symbol in the next place.</p>
+		<Odometer base={10} initialValue={globalValue} label="Value" places={4} showBaseTenValue={false} bind:value={globalValue}/>
+		<p>Notice that in base-ten, each subsequent dial on the left represents a higher power of ten. In this case, the number <b>{globalValue}</b> represents <NumberAndLabel label="thousand" value={globalValueString[0]}/>, <NumberAndLabel label="hundred" value={globalValueString[1]}/>, <NumberAndLabel label="ten" value={globalValueString[2]}/>, and <NumberAndLabel label="one" value={globalValueString[3]}/>. Instead of coming up with an infinite number of symbols to represent every single number (❄︎, 🍕, ﬗ, <span style="font-size: 1.5em">🦝</span>, ...), we only use ten. When we run out of symbols in one place, we increment the symbol in the next place.</p>
 	</section>
 
 	<section>
 		<h2>What is Binary?</h2>
 		<p>Unlike our day-to-day base-ten counting system, base-two (aka <b>binary</b>) only has two symbols - 0 and 1 - which are useful in electronics to represent low and high voltage. At first, binary seems a little funny compared to what we're used to. For example, the number 9 is represented in binary as <b>1001</b>. This is because binary only has two symbols and has to start using its higher dials much earlier.</p>
-		<Odometer base={2} initialValue={0} places={4}/>
+		<Odometer base={2} initialValue={0} places={5}/>
 		<p>In decimal / base-ten, each subsequent place represents a higher power of ten. Similarly, in binary, each subsequent place represents a higher power of two. When converting from binary to decimal, you can simply add the powers of 2. Here are some examples:</p>
 		<ul>
 			<li><b>1</b> in binary converts to <b>1</b> in decimal</li>
 			<li><b>10</b> in binary converts to <b>2</b> in decimal</li>
-			<li><b>11</b> in binary converts to 1 + 2 = <b>3</b> in decimal</li>
-			<li><b>101</b> in binary converts to 1 + 4 = <b>5</b> in decimal</li>
-			<li><b>1111</b> in binary converts to 1 + 2 + 4 + 8 = <b>15</b> in decimal</li>
+			<li><b>11</b> in binary converts to 2 + 1 = <b>3</b> in decimal</li>
+			<li><b>101</b> in binary converts to 4 + 1 = <b>5</b> in decimal</li>
+			<li><b>1111</b> in binary converts to 8 + 4 + 2 + 1 = <b>15</b> in decimal</li>
 		</ul>
 	</section>
 
@@ -80,6 +83,15 @@
 			padding-left: calc(50vw - 400px);
 			padding-right: calc(50vw - 400px);
 		}
+	}
+
+	header {
+		height: 70vh;
+		background-color: #ddd;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 	}
 
 	header a img {

@@ -8,19 +8,19 @@
   export let label: string = "Base 10 Value"
   export let places: number = 1
   export let showBaseTenValue: boolean = true
-	let odometerValue = initialValue
+	export let value = initialValue
 
   $: getDialValue = (factor) => {
     //Each dial needs to track its value and the values of the dials above it,
     //which is necessary to have smooth animations when we wrap around start and end digits:
     //ie between 9 and 0 in base ten.
     //Also floor the value into an integer to avoid intermediate dial positions.
-    return Math.floor(odometerValue / factor)
+    return Math.floor(value / factor)
   }
   function makeSetValueFunction(factor: number) {
     return (
       (difference: number) => {
-  			odometerValue += roundToNearest(factor*difference, factor)
+  			value += roundToNearest(factor*difference, factor)
       }
     )
   }
@@ -30,9 +30,9 @@
 </script>
 
 <main style="--dial-width:{DIAL_WIDTH}px">
-  <div><b>{label}:</b> {odometerValue}</div>
+  <div><b>{label}:</b> {value}</div>
   {#if showBaseTenValue}
-    <div><b>Base {base} Value:</b> {odometerValue.toString(base).toUpperCase()}</div>
+    <div><b>Base {base} Value:</b> {value.toString(base).toUpperCase()}</div>
   {/if}
 	<div class="odometer-container">
     <div class="odometer">
@@ -55,7 +55,7 @@
     {/each}
   </div>
   <div>
-    <button on:click={() => odometerValue ++}>Increment Value</button>
+    <button on:click={() => value ++}>Increment Value</button>
   </div>
 </main>
 
