@@ -102,7 +102,6 @@
 <main style="--dial-width:{DIAL_WIDTH}px;--dial-height:{DIAL_HEIGHT}px">
 	<div
 		class="dial-container"
-		on:click={() => console.log("CLICK")}
 		on:mousedown={handleMousedown}
 		on:mousemove={handleMousemove}
 		on:mouseleave={handleDialEnd}
