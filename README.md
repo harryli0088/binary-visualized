@@ -1,4 +1,4 @@
-# Bearing Rate Graph
+# Binary Visualized
 
 I made this interactive website to visualize counting in binary!
 
