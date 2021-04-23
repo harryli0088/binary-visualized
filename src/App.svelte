@@ -102,7 +102,7 @@
 		<p>In theory, you could arbitrarily decide to count in any base you wanted, say base-twenty seven million. In practice, there are only two other commonly used counting systems. The first is base-eight (aka <b>octal</b>):</p>
 		<Odometer base={8} initialValue={0} label="Octal" places={4}/>
 
-		<p>The second is base-sixteen (aka <b>hexadecimal</b>), which uses symbols A, B, C, D, E and F to represent values 10, 11, 12, 14, and 15:</p>
+		<p>The second is base-sixteen (aka <b>hexadecimal</b>), which uses symbols A, B, C, D, E and F to represent numbers ten to fifteen:</p>
 		<Odometer base={16} initialValue={43981} label="Hexadecimal" places={4}/>
 	</section>
 
