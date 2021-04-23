@@ -60,7 +60,7 @@
   }
 	function moveDial(clientY: number) {
 		if(dialIsMoving()) { //if we are changing this dial
-			myValue.set(startValue + 1.2*(startClientY - clientY) / DIAL_HEIGHT, {duration: 0})
+			myValue.set(startValue + 1.5*(startClientY - clientY) / DIAL_HEIGHT, {duration: 0})
 		}
 	}
 
