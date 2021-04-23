@@ -35,6 +35,7 @@
 		<p>Odometers (like the one in your '95 Toyota Camery) use rotating dials to represent multi-digit numbers. Try rotating the right-most dial and see how it behaves! What happens when you increment from nine to ten?</p>
 		<Odometer base={10} initialValue={0} places={2} showDecimalValue={false}/>
 		<p>When we ran out of symbols in the <b>ones</b> place, we incremented the symbol in the <b>tens</b> place from 0 to 1. We also made a full revolution in the ones place from 9 back to 0.</p>
+		<p>Next let's take a look at the longer odometer below.</p>
 		<Odometer base={10} initialValue={globalValue} places={4} showDecimalValue={false} bind:value={globalValue}/>
 		<p>Notice that in base-<i>ten</i>, each subsequent dial on the left represents a higher power of <i>ten</i>. In this case, the number <b>{globalValue}</b> represents <NumberAndLabel label="thousand" value={globalValueString[0]}/>, <NumberAndLabel label="hundred" value={globalValueString[1]}/>, <NumberAndLabel label="ten" value={globalValueString[2]}/>, and <NumberAndLabel label="one" value={globalValueString[3]}/>. Instead of coming up with infinite symbols to represent every number (❄︎, 🍕, ﬗ, <span style="font-size: 1.5em">🦝</span>, ...), we only use ten. When we run out of symbols in one place, we increment the symbol in the next place.</p>
 	</section>
