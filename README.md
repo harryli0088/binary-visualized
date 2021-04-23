@@ -4,6 +4,8 @@ I made this interactive website to visualize counting in binary!
 
 Live Site: https://harryli0088.github.io/binary-visualized/
 
+![Screenshot](/public/img/screenshot.png)
+
 Built using Svelte and TypeScript.
 
 

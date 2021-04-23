@@ -5,9 +5,9 @@
 
   export let base: number = 10
   export let initialValue: number = 0
-  export let label: string = "Base 10 Value"
+  export let label: string = ""
   export let places: number = 1
-  export let showBaseTenValue: boolean = true
+  export let showDecimalValue: boolean = true
 	export let value = initialValue
 
   $: getDialValue = (factor) => {
@@ -30,10 +30,7 @@
 </script>
 
 <main style="--dial-width:{DIAL_WIDTH}px">
-  <div><b>{label}:</b> {value}</div>
-  {#if showBaseTenValue}
-    <div><b>Base {base} Value:</b> {value.toString(base).toUpperCase()}</div>
-  {/if}
+	<h3>{label} Odometer</h3>
 	<div class="odometer-container">
     <div class="odometer">
       {#each factors as factor, i}
@@ -54,7 +51,15 @@
       <div class="place">{factor}</div>
     {/each}
   </div>
-  <div>
+
+	<br/>
+
+	<div><b>{label} Value:</b> {value.toString(base).toUpperCase()}</div>
+  {#if showDecimalValue}
+    <div>(<b>Decimal Value:</b> {value.toString()})</div>
+  {/if}
+
+	<div>
     <button on:click={() => value ++}>Increment Value</button>
   </div>
 </main>
