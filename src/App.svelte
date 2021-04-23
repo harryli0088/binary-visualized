@@ -114,6 +114,7 @@
 	<footer>
 		<p>Built using <a href="https://svelte.dev/" target="_blank" rel="noopener noreferrer">Svelte</a> and <a href="https://www.typescriptlang.org/" target="_blank" rel="noopener noreferrer">Typescript</a></p>
 		<p>Github Repo: <a href="https://github.com/harryli0088/binary-visualized" target="_blank" rel="noopener noreferrer">https://github.com/harryli0088/binary-visualized</a></p>
+		<p>Github Logo provided by Font Awesome: <a href="https://fontawesome.com/license" target="_blank" rel="noopener noreferrer">https://fontawesome.com/license</a></p>
 	</footer>
 </main>
 
